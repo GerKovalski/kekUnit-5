@@ -1,5 +1,6 @@
 package com.epam.wtf.service;
 
+import com.epam.wtf.service.CatService;
 import org.springframework.stereotype.Service;
 
 @Service("catService")

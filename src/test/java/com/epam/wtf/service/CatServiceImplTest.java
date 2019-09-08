@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.exceptions.verification.MoreThanAllowedActualInvocations;
-import org.mockito.exceptions.verification.TooFewActualInvocations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
@@ -35,6 +34,30 @@ public class CatServiceImplTest {
         assertEquals(15.0 ,catService.add(1.0, 14.0), 0);
 
         verify(catService).add(1.0, 14.0);
+    }
+
+    @Test
+    public void testSubtract() {
+        when(cats.subtract(anyDouble(), anyDouble())).thenReturn(5.0);
+        assertEquals(5.0, catService.subtract(1.0, 1.0), 0);
+        verify(catService, times(1)).subtract(anyDouble(), anyDouble());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testMultiply() {
+        when(cats.multiply(anyDouble(), anyDouble())).thenThrow(new RuntimeException());
+        catService.multiply(1.0, 1.0);
+        verify(catService, never()).multiply(anyDouble(), anyDouble());
+    }
+
+    @Test
+    public void testDivide() {
+        Answer<Double> answerDivide = (invocationOnMock -> {
+           Object[] object = invocationOnMock.getArguments();
+           return (Double) object[0] / (Double) object[1];
+        });
+        when(cats.divide(anyDouble(), anyDouble())).thenAnswer(answerDivide);
+        assertEquals(5.0, catService.divide(10.0, 2.0), 0);
     }
 
     @Test(expected = MoreThanAllowedActualInvocations.class)
